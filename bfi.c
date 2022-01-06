@@ -185,10 +185,10 @@ bfi_instruction_t *bfi_instr_lexing(bfi_token_t *tokens) {
 
       break;
     case bfi_token_input_data:
-      stbds_arrput(instructions, bfi_new_instr_out());
+      stbds_arrput(instructions, bfi_new_instr_in());
       break;
     case bfi_token_output_data:
-      stbds_arrput(instructions, bfi_new_instr_in());
+      stbds_arrput(instructions, bfi_new_instr_out());
       break;
     case bfi_token_jump_fwr:
       new_instr = bfi_new_instr_jump_fwr(stbds_arrlenu(instructions), 0);
@@ -239,6 +239,53 @@ bfi_instruction_t *bfi_instr_lexing(bfi_token_t *tokens) {
   return instructions;
 }
 
+void bfi_run_instrs(bfi_memory_layout_t *mem, bfi_instruction_t *program) {
+  if (program == NULL || stbds_arrlenu(program) == 0) {
+    return;
+  }
+
+  uint32_t instr_ptr = 0;
+  for (;;) {
+    if (instr_ptr >= stbds_arrlenu(program)) {
+      return;
+    }
+
+    switch (program[instr_ptr].type) {
+    case bfi_instr_unknown:
+      /*
+       * This instruction shouldn't be in the program.
+       */
+      return;
+    case bfi_instr_diff_ptr:
+      mem->mem_ptr += program[instr_ptr].data.diff;
+      break;
+    case bfi_instr_diff_data:
+      mem->memory[mem->mem_ptr] += program[instr_ptr].data.diff;
+      break;
+    case bfi_instr_out:
+      putchar(mem->memory[mem->mem_ptr]);
+      break;
+    case bfi_instr_in:
+      mem->memory[mem->mem_ptr] = getchar();
+      break;
+    case bfi_instr_jump_fwr:
+      if (mem->memory[mem->mem_ptr] == 0) {
+        instr_ptr = program[instr_ptr].data.jump.end_instr_ptr + 1;
+        continue;
+      }
+      break;
+    case bfi_instr_jump_bck:
+      if (mem->memory[mem->mem_ptr] != 0) {
+        instr_ptr = program[instr_ptr].data.jump.begin_instr_ptr + 1;
+        continue;
+      }
+      break;
+    }
+
+    instr_ptr++;
+  }
+}
+
 void bfi_instr_show(FILE *f, bfi_instruction_t *instr) {
   if (instr == NULL || f == NULL) {
     return;
@@ -250,7 +297,6 @@ void bfi_instr_show(FILE *f, bfi_instruction_t *instr) {
     break;
   case bfi_instr_diff_ptr:
     fprintf(f, "bfi_instr_diff_ptr {diff=%" PRId32 "}", instr->data.diff);
-    break;
     break;
   case bfi_instr_diff_data:
     fprintf(f, "bfi_instr_diff_data {diff=%" PRId32 "}", instr->data.diff);

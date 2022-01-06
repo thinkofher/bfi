@@ -81,6 +81,11 @@ bfi_instruction_t bfi_new_instr_jump_bck(uint32_t begin, uint32_t end);
 bfi_instruction_t *bfi_instr_lexing(bfi_token_t *stb_arr);
 
 /*
+ * Run set of instructions against memory layout.
+ */
+void bfi_run_instrs(bfi_memory_layout_t *mem, bfi_instruction_t *program);
+
+/*
  * Outputs information about given instruction to provided file handle.
  */
 void bfi_instr_show(FILE *f, bfi_instruction_t *instr);
