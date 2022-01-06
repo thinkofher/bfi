@@ -68,6 +68,21 @@ typedef struct {
 
 bfi_instruction_t bfi_new_diff_ptr_instr(int32_t diff);
 
+bfi_instruction_t bfi_new_diff_data_instr(int32_t diff);
+
+bfi_instruction_t bfi_new_instr_out(void);
+
+bfi_instruction_t bfi_new_instr_in(void);
+
+bfi_instruction_t bfi_new_instr_jump_fwr(uint32_t begin, uint32_t end);
+
+bfi_instruction_t bfi_new_instr_jump_bck(uint32_t begin, uint32_t end);
+
 bfi_instruction_t *bfi_instr_lexing(bfi_token_t *stb_arr);
+
+/*
+ * Outputs information about given instruction to provided file handle.
+ */
+void bfi_instr_show(FILE *f, bfi_instruction_t *instr);
 
 #endif
