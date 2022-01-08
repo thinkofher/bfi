@@ -33,6 +33,12 @@ bfi_token_t bfi_tokenize(char);
  */
 bfi_token_t *bfi_tokenize_file(FILE *f);
 
+/*
+ * bfi_tokenize_str returns stbds array with tokens
+ * read from given string of ASCII characters.
+ */
+bfi_token_t *bfi_tokenize_str(const char *str);
+
 #define BFI_MEMORY_SIZE 30000
 
 typedef struct {

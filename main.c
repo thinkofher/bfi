@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 #include "bfi.h"
+#include "repl.h"
 
 #define STB_DS_IMPLEMENTATION
 #define STBDS_NO_SHORT_NAMES
@@ -10,9 +11,19 @@
 #define PROJECT_NAME "bfi"
 
 int main(int argc, char *argv[]) {
-  if (argc < 2) {
+  if (argc == 0) {
     fprintf(stderr, "provide filename with brainfuck source code\n");
     return 1;
+  }
+
+  /*
+   * Allocate fixed memory layout for running programs.
+   */
+  bfi_memory_layout_t mem = bfi_new_memory();
+
+  if (argc == 1) {
+    bfi_run_repl(&mem);
+    return 0;
   }
 
   FILE *src = fopen(argv[1], "r");
@@ -47,11 +58,6 @@ int main(int argc, char *argv[]) {
    *   putchar('\n');
    * }
    */
-
-  /*
-   * Allocate fixed memory layout for running programs.
-   */
-  bfi_memory_layout_t mem = bfi_new_memory();
 
   /*
    * Run tokenized program against freshly allocated memory.

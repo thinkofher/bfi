@@ -3,7 +3,7 @@ project('bfi', 'c',
   default_options : ['warning_level=3'])
 
 src = [
-  'main.c', 'bfi.c',
+  'main.c', 'bfi.c', 'repl.c',
 ]
 
 exe = executable('bfi', src,

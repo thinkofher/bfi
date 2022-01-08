@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 #include "bfi.h"
 
@@ -21,6 +22,19 @@ bfi_token_t bfi_tokenize(char c) {
   default:
     return bfi_token_none;
   }
+}
+
+bfi_token_t *bfi_tokenize_str(const char *str) {
+  bfi_token_t *res = NULL;
+
+  bfi_token_t t = bfi_token_none;
+  for (size_t i = 0; i < strlen(str); i++) {
+    t = bfi_tokenize(str[i]);
+    if (t != bfi_token_none)
+      stbds_arrput(res, t);
+  }
+
+  return res;
 }
 
 bfi_token_t *bfi_tokenize_file(FILE *f) {
